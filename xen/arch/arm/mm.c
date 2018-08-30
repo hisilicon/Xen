@@ -718,8 +718,6 @@ void __init setup_pagetables(unsigned long boot_phys_offset, paddr_t xen_paddr)
     write_pte(xen_second + second_linear_offset(XEN_VIRT_START), pte);
     /* TLBFLUSH and ISB would be needed here, but wait until we set WXN */
 
-    /* From now on, no mapping may be both writable and executable. */
-    WRITE_SYSREG32(READ_SYSREG32(SCTLR_EL2) | SCTLR_WXN, SCTLR_EL2);
     /* Flush everything after setting WXN bit. */
     flush_xen_text_tlb_local();
 
