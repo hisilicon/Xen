@@ -1695,7 +1695,18 @@ static int vgic_v3_real_domain_init(struct domain *d)
             d->arch.vgic.rdist_regions[i].first_cpu = first_cpu;
 
             first_cpu += size / GICV3_GICR_SIZE;
+
+            if ( first_cpu >= d->max_vcpus )
+                break;
         }
+
+        /*
+         * The hardware domain may not used all the re-distributors
+         * regions (e.g when the number of vCPUs does not match the
+         * number of pCPUs). Update the number of regions to avoid
+         * exposing unused region as they will not get emulated.
+         */
+        d->arch.vgic.nr_regions = i + 1;
 
         d->arch.vgic.intid_bits = vgic_v3_hw.intid_bits;
     }
